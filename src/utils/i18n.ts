@@ -52,6 +52,19 @@ export interface Translations {
   uploadClear: string;
   uploadCount: string;
   uploadTotalSize: string;
+  // 智能客服
+  chatTitle: string;
+  chatSubtitle: string;
+  chatPlaceholder: string;
+  chatSend: string;
+  chatWelcome: string;
+  chatTyping: string;
+  chatOnline: string;
+  chatMinimize: string;
+  chatClose: string;
+  chatNewSession: string;
+  chatPowered: string;
+  chatFaqs: string[];
 }
 
 export const translations: Record<Language, Translations> = {
@@ -106,6 +119,23 @@ export const translations: Record<Language, Translations> = {
     uploadClear: '清空全部',
     uploadCount: '个文件',
     uploadTotalSize: '总大小',
+    chatTitle: '智能客服',
+    chatSubtitle: '随时为您解答',
+    chatPlaceholder: '输入您的问题...',
+    chatSend: '发送',
+    chatWelcome: '👋 您好！我是智能客服助手，有什么可以帮您的吗？',
+    chatTyping: '正在输入...',
+    chatOnline: '在线',
+    chatMinimize: '最小化',
+    chatClose: '关闭',
+    chatNewSession: '新对话',
+    chatPowered: 'AI 驱动',
+    chatFaqs: [
+      '如何开始推广？',
+      '支持哪些平台？',
+      '推广效果如何？',
+      '如何上传文件？',
+    ],
   },
   en: {
     title: 'Auto Promotion Tool',
@@ -158,6 +188,23 @@ export const translations: Record<Language, Translations> = {
     uploadClear: 'Clear All',
     uploadCount: 'files',
     uploadTotalSize: 'Total size',
+    chatTitle: 'Smart Assistant',
+    chatSubtitle: 'Here to help you anytime',
+    chatPlaceholder: 'Type your question...',
+    chatSend: 'Send',
+    chatWelcome: '👋 Hi there! I\'m your AI assistant. How can I help you today?',
+    chatTyping: 'Typing...',
+    chatOnline: 'Online',
+    chatMinimize: 'Minimize',
+    chatClose: 'Close',
+    chatNewSession: 'New Chat',
+    chatPowered: 'AI Powered',
+    chatFaqs: [
+      'How to start promotion?',
+      'Which platforms are supported?',
+      'How effective is it?',
+      'How to upload files?',
+    ],
   },
   fr: {
     title: 'Outil de promotion automatique',
@@ -210,6 +257,23 @@ export const translations: Record<Language, Translations> = {
     uploadClear: 'Tout effacer',
     uploadCount: 'fichiers',
     uploadTotalSize: 'Taille totale',
+    chatTitle: 'Assistant IA',
+    chatSubtitle: 'Disponible à tout moment',
+    chatPlaceholder: 'Posez votre question...',
+    chatSend: 'Envoyer',
+    chatWelcome: '👋 Bonjour ! Je suis votre assistant IA. Comment puis-je vous aider ?',
+    chatTyping: 'En train d\'écrire...',
+    chatOnline: 'En ligne',
+    chatMinimize: 'Réduire',
+    chatClose: 'Fermer',
+    chatNewSession: 'Nouveau chat',
+    chatPowered: 'Propulsé par IA',
+    chatFaqs: [
+      'Comment démarrer la promotion ?',
+      'Quelles plateformes sont supportées ?',
+      'Quelle est l\'efficacité ?',
+      'Comment télécharger des fichiers ?',
+    ],
   },
   de: {
     title: 'Automatisches Promotion-Tool',
@@ -262,6 +326,23 @@ export const translations: Record<Language, Translations> = {
     uploadClear: 'Alle löschen',
     uploadCount: 'Dateien',
     uploadTotalSize: 'Gesamtgröße',
+    chatTitle: 'KI-Assistent',
+    chatSubtitle: 'Jederzeit für Sie da',
+    chatPlaceholder: 'Ihre Frage eingeben...',
+    chatSend: 'Senden',
+    chatWelcome: '👋 Hallo! Ich bin Ihr KI-Assistent. Wie kann ich Ihnen helfen?',
+    chatTyping: 'Schreibt...',
+    chatOnline: 'Online',
+    chatMinimize: 'Minimieren',
+    chatClose: 'Schließen',
+    chatNewSession: 'Neuer Chat',
+    chatPowered: 'KI-gestützt',
+    chatFaqs: [
+      'Wie starte ich die Promotion?',
+      'Welche Plattformen werden unterstützt?',
+      'Wie effektiv ist es?',
+      'Wie lade ich Dateien hoch?',
+    ],
   },
   ja: {
     title: '自動プロモーションツール',
@@ -314,6 +395,23 @@ export const translations: Record<Language, Translations> = {
     uploadClear: 'すべて削除',
     uploadCount: 'ファイル',
     uploadTotalSize: '合計サイズ',
+    chatTitle: 'AIアシスタント',
+    chatSubtitle: 'いつでもお役に立ちます',
+    chatPlaceholder: 'ご質問を入力してください...',
+    chatSend: '送信',
+    chatWelcome: '👋 こんにちは！AIアシスタントです。何かご不明な点はありますか？',
+    chatTyping: '入力中...',
+    chatOnline: 'オンライン',
+    chatMinimize: '最小化',
+    chatClose: '閉じる',
+    chatNewSession: '新しいチャット',
+    chatPowered: 'AI搭載',
+    chatFaqs: [
+      'プロモーションを始めるには？',
+      'どのプラットフォームに対応？',
+      '効果はどうですか？',
+      'ファイルのアップロード方法は？',
+    ],
   },
   ar: {
     title: 'أداة الترويج التلقائي',
@@ -366,6 +464,23 @@ export const translations: Record<Language, Translations> = {
     uploadClear: 'حذف الكل',
     uploadCount: 'ملفات',
     uploadTotalSize: 'الحجم الإجمالي',
+    chatTitle: 'المساعد الذكي',
+    chatSubtitle: 'متاح في أي وقت',
+    chatPlaceholder: 'اكتب سؤالك...',
+    chatSend: 'إرسال',
+    chatWelcome: '👋 مرحباً! أنا مساعدك الذكي. كيف يمكنني مساعدتك؟',
+    chatTyping: 'يكتب...',
+    chatOnline: 'متصل',
+    chatMinimize: 'تصغير',
+    chatClose: 'إغلاق',
+    chatNewSession: 'محادثة جديدة',
+    chatPowered: 'مدعوم بالذكاء الاصطناعي',
+    chatFaqs: [
+      'كيف أبدأ الترويج؟',
+      'ما المنصات المدعومة؟',
+      'ما مدى فعاليته؟',
+      'كيف أرفع الملفات؟',
+    ],
   },
 };
 
