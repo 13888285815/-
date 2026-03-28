@@ -1,5 +1,12 @@
 import { useState, useEffect, useCallback, memo } from 'react'
-import { Language, Translations, translations, detectLanguage } from '../utils/i18n'
+import {
+  Language,
+  Translations,
+  translations,
+  detectLanguage,
+  saveLanguagePreference,
+  RTL_LANGUAGES,
+} from '../utils/i18n'
 
 // ─── 类型定义 ─────────────────────────────────────────────────
 interface DomainStat {
@@ -21,7 +28,6 @@ interface PromotionRecord {
 }
 
 // ─── 安全：允许的 URL 协议白名单 ─────────────────────────────
-// 防止 javascript:、data:、vbscript: 等协议注入
 const ALLOWED_PROTOCOLS = new Set(['http:', 'https:'])
 
 function isSafeUrl(raw: string): boolean {
@@ -33,8 +39,7 @@ function isSafeUrl(raw: string): boolean {
   }
 }
 
-// ─── 安全：对显示用字符串做基础净化（防止非受控输出） ─────────
-// React 渲染时已自动转义，此处主要用于 title/aria 属性
+// ─── 安全：属性值 HTML 转义（防 XSS） ─────────────────────────
 function sanitizeForAttr(value: string): string {
   return value
     .replace(/&/g, '&amp;')
@@ -63,7 +68,6 @@ function generateDomainStat(hostname: string, rank: number, seed: number): Domai
   }
 }
 
-// 子域名推广记录也使用确定性种子，消除残余 Math.random 调用
 function generatePromotionRecords(
   url: string,
   hostname: string,
@@ -85,7 +89,6 @@ function generatePromotionRecords(
     url: subdomain,
     hostname: new URL(subdomain).hostname,
     platform: '百度',
-    // 每条子域名用不同的 n 偏移，保证各行数据不同
     linkCount: Math.floor(lcg(seed, 100 + i) * 2000) + 1000,
     isSubdomain: true,
   }))
@@ -94,27 +97,27 @@ function generatePromotionRecords(
 }
 
 // ─── 常量 ──────────────────────────────────────────────────────
-const LANGUAGES: Language[] = ['zh', 'en', 'fr', 'ja', 'de', 'ar']
+const LANGUAGES: Language[] = ['zh', 'en', 'fr', 'de', 'ja', 'ar']
 
 const LANGUAGE_NAMES: Record<Language, string> = {
   zh: '中文',
   en: 'English',
   fr: 'Français',
-  ja: '日本語',
   de: 'Deutsch',
+  ja: '日本語',
   ar: 'العربية',
 }
 
 // ─── 子组件：统计表格行 ────────────────────────────────────────
 const DomainStatRow = memo(({ stat, index }: { stat: DomainStat; index: number }) => (
-  <tr className={index % 2 === 0 ? 'bg-blue-50' : ''}>
-    <td className="px-4 py-2 font-medium">{stat.rank}</td>
-    <td className="px-4 py-2 font-medium">{stat.hostname}</td>
-    <td className="px-4 py-2">{stat.traffic.toLocaleString()}</td>
-    <td className="px-4 py-2">{stat.visits.toLocaleString()}</td>
-    <td className="px-4 py-2">{stat.conversionRate}</td>
-    <td className="px-4 py-2">{stat.bounceRate}</td>
-    <td className="px-4 py-2">{stat.avgDuration}</td>
+  <tr className={index % 2 === 0 ? 'bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-gray-800'}>
+    <td className="px-3 py-2 font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">{stat.rank}</td>
+    <td className="px-3 py-2 font-medium text-blue-600 dark:text-blue-400 break-all">{stat.hostname}</td>
+    <td className="px-3 py-2 text-gray-600 dark:text-gray-400 whitespace-nowrap">{stat.traffic.toLocaleString()}</td>
+    <td className="px-3 py-2 text-gray-600 dark:text-gray-400 whitespace-nowrap">{stat.visits.toLocaleString()}</td>
+    <td className="px-3 py-2 text-green-600 dark:text-green-400 whitespace-nowrap">{stat.conversionRate}</td>
+    <td className="px-3 py-2 text-orange-500 dark:text-orange-400 whitespace-nowrap">{stat.bounceRate}</td>
+    <td className="px-3 py-2 text-gray-600 dark:text-gray-400 whitespace-nowrap">{stat.avgDuration}</td>
   </tr>
 ))
 DomainStatRow.displayName = 'DomainStatRow'
@@ -122,22 +125,57 @@ DomainStatRow.displayName = 'DomainStatRow'
 // ─── 子组件：推广效果行 ───────────────────────────────────────
 const PromotionRecordRow = memo(
   ({ record, index, stripe }: { record: PromotionRecord; index: number; stripe: string }) => (
-    <tr className={index % 2 === 0 ? stripe : ''}>
-      {/* 安全：用 title 属性展示完整 URL，React 已自动转义文本节点 */}
+    <tr className={index % 2 === 0 ? stripe : 'bg-white dark:bg-gray-800'}>
       <td
-        className="px-4 py-2 max-w-xs truncate"
+        className="px-3 py-2 max-w-[160px] sm:max-w-xs truncate text-gray-700 dark:text-gray-300"
         title={sanitizeForAttr(record.url)}
       >
         {record.url}
       </td>
-      <td className="px-4 py-2">{record.hostname}</td>
-      <td className="px-4 py-2">{record.platform}</td>
-      <td className="px-4 py-2">{record.linkCount.toLocaleString()}</td>
-      <td className="px-4 py-2 text-green-600 font-medium">成功</td>
+      <td className="px-3 py-2 text-blue-600 dark:text-blue-400 break-all">{record.hostname}</td>
+      <td className="px-3 py-2 text-gray-600 dark:text-gray-400 whitespace-nowrap">{record.platform}</td>
+      <td className="px-3 py-2 text-gray-600 dark:text-gray-400 whitespace-nowrap">{record.linkCount.toLocaleString()}</td>
+      <td className="px-3 py-2 text-green-600 dark:text-green-400 font-medium whitespace-nowrap">✓</td>
     </tr>
   )
 )
 PromotionRecordRow.displayName = 'PromotionRecordRow'
+
+// ─── 响应式滚动表格容器 ───────────────────────────────────────
+function ScrollTable({
+  ariaLabel,
+  headers,
+  children,
+}: {
+  ariaLabel: string
+  headers: string[]
+  children: React.ReactNode
+}) {
+  return (
+    // -webkit-overflow-scrolling: touch → iOS Safari 惯性滚动
+    <div className="overflow-x-auto -mx-4 sm:mx-0 rounded-lg" style={{ WebkitOverflowScrolling: 'touch' }}>
+      <table
+        className="min-w-full text-sm border-collapse"
+        aria-label={ariaLabel}
+      >
+        <thead>
+          <tr className="bg-gray-100 dark:bg-gray-700">
+            {headers.map((h) => (
+              <th
+                key={h}
+                scope="col"
+                className="px-3 py-2.5 text-left font-semibold text-gray-600 dark:text-gray-300 whitespace-nowrap"
+              >
+                {h}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-gray-100 dark:divide-gray-700">{children}</tbody>
+      </table>
+    </div>
+  )
+}
 
 // ─── 主组件 ────────────────────────────────────────────────────
 const Promotion: React.FC = () => {
@@ -151,7 +189,9 @@ const Promotion: React.FC = () => {
   const [promotionRecords, setPromotionRecords] = useState<PromotionRecord[]>([])
 
   const t: Translations = translations[currentLang]
+  const isRTL = RTL_LANGUAGES.has(currentLang)
 
+  // 初始化：检测语言，同步 HTML dir 属性
   useEffect(() => {
     detectLanguage().then((lang) => {
       setCurrentLang(lang)
@@ -159,8 +199,15 @@ const Promotion: React.FC = () => {
     })
   }, [])
 
+  // 切换语言时更新 HTML lang + dir 属性（影响整个文档）
+  useEffect(() => {
+    document.documentElement.lang = currentLang
+    document.documentElement.dir = isRTL ? 'rtl' : 'ltr'
+  }, [currentLang, isRTL])
+
   const handleLanguageChange = useCallback((lang: Language) => {
     setCurrentLang(lang)
+    saveLanguagePreference(lang)
   }, [])
 
   const handlePromotion = useCallback(
@@ -169,17 +216,15 @@ const Promotion: React.FC = () => {
 
       const trimmedUrl = url.trim()
 
-      // 空值校验
       if (!trimmedUrl) {
         setStatus(t.emptyUrlMessage)
         setPromotionSuccess(false)
         return
       }
 
-      // ── 安全：协议白名单校验 ──────────────────────────────────
-      // 防止 javascript:alert(1)、data:text/html,<script>… 等注入
+      // 安全：协议白名单校验
       if (!isSafeUrl(trimmedUrl)) {
-        setStatus(t.errorMessage)
+        setStatus(t.invalidUrlMessage)
         setPromotionSuccess(false)
         return
       }
@@ -188,13 +233,11 @@ const Promotion: React.FC = () => {
       try {
         parsedUrl = new URL(trimmedUrl)
       } catch {
-        setStatus(t.errorMessage)
+        setStatus(t.invalidUrlMessage)
         setPromotionSuccess(false)
         return
       }
 
-      // ── 安全：主机名基本合法性校验 ───────────────────────────
-      // 防止空主机名或纯 IP 127.x 等内网地址被提交
       const hostname = parsedUrl.hostname
       if (!hostname || hostname.length > 253) {
         setStatus(t.errorMessage)
@@ -213,7 +256,6 @@ const Promotion: React.FC = () => {
         let newSubdomains: string[] = []
 
         if (hostname.endsWith('yndxw.com')) {
-          // 安全：精确 endsWith 匹配，防止 evilyndxw.com 绕过
           const baseDomain = 'yndxw.com'
           const subdomainPrefixes = ['www', 'm', 'api', 'cdn', 'blog', 'news']
           newSubdomains = subdomainPrefixes.map(
@@ -221,10 +263,8 @@ const Promotion: React.FC = () => {
           )
         }
 
-        // 模拟推广延迟
         await new Promise<void>((resolve) => setTimeout(resolve, 2000))
 
-        // 用时间戳作为种子，保证同一次推广内部数据稳定一致
         const seed = Date.now()
         const allHostnames = [hostname, ...newSubdomains.map((s) => new URL(s).hostname)]
         const stats = allHostnames.map((h, i) => generateDomainStat(h, i + 1, seed + i))
@@ -244,204 +284,325 @@ const Promotion: React.FC = () => {
     [url, t]
   )
 
+  // ── Loading 状态 ──────────────────────────────────────────────
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" role="status" aria-live="polite">
-        <div className="text-xl text-gray-500">Loading...</div>
+      <div
+        className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900"
+        role="status"
+        aria-live="polite"
+      >
+        <div className="flex flex-col items-center gap-3">
+          {/* 旋转加载圈 */}
+          <svg
+            className="w-10 h-10 animate-spin text-blue-500"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+          </svg>
+          <span className="text-gray-500 dark:text-gray-400 text-lg">Loading…</span>
+        </div>
       </div>
     )
   }
 
-  const isRTL = currentLang === 'ar'
   const hasSubdomains = promotionRecords.some((r) => r.isSubdomain)
   const mainRecords = promotionRecords.filter((r) => !r.isSubdomain)
   const subRecords = promotionRecords.filter((r) => r.isSubdomain)
+  const statHeaders = [
+    t.tableStats.rank,
+    t.tableStats.domain,
+    t.tableStats.traffic,
+    t.tableStats.visits,
+    t.tableStats.conversion,
+    t.tableStats.bounce,
+    t.tableStats.duration,
+  ]
+  const promoHeaders = [
+    t.tablePromotion.address,
+    t.tablePromotion.domain,
+    t.tablePromotion.platform,
+    t.tablePromotion.linkCount,
+    t.tablePromotion.status,
+  ]
 
   return (
-    <div className={`min-h-screen bg-gray-50 ${isRTL ? 'rtl' : 'ltr'}`}>
-      <div className="container mx-auto px-4 py-8">
+    <div
+      className={`min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200 ${
+        isRTL ? 'rtl' : 'ltr'
+      }`}
+    >
+      {/* ── 顶部导航栏 ────────────────────────────────────────── */}
+      <header className="sticky top-0 z-50 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700 shadow-sm">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-3">
+          {/* Logo / 标题 */}
+          <div className="flex items-center gap-2 min-w-0">
+            <svg
+              className="w-7 h-7 text-blue-500 flex-shrink-0"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              aria-hidden="true"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+            <span className="font-bold text-gray-900 dark:text-white text-base sm:text-lg truncate">
+              {t.title}
+            </span>
+          </div>
 
-        {/* 语言选择器 */}
-        <div className="flex justify-end mb-6">
-          <div className="flex flex-wrap gap-2" role="group" aria-label="Language selector">
+          {/* 语言选择器 */}
+          <nav
+            className="flex flex-wrap gap-1 sm:gap-1.5 justify-end"
+            role="group"
+            aria-label={t.langLabel}
+          >
             {LANGUAGES.map((lang) => (
               <button
                 key={lang}
                 onClick={() => handleLanguageChange(lang)}
                 aria-pressed={currentLang === lang}
-                className={`px-3 py-1 rounded text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-400 ${
-                  currentLang === lang
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-white text-gray-700 border border-gray-300 hover:border-blue-400'
-                }`}
+                className={`
+                  px-2 py-1 rounded text-xs sm:text-sm font-medium
+                  transition-all duration-150
+                  focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-1
+                  active:scale-95
+                  ${
+                    currentLang === lang
+                      ? 'bg-blue-500 text-white shadow-sm'
+                      : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-blue-100 dark:hover:bg-blue-900/40 hover:text-blue-600 dark:hover:text-blue-400 border border-transparent hover:border-blue-300'
+                  }
+                `}
               >
                 {LANGUAGE_NAMES[lang]}
               </button>
             ))}
-          </div>
+          </nav>
         </div>
+      </header>
 
-        <div className="max-w-4xl mx-auto">
+      {/* ── 主内容区 ───────────────────────────────────────────── */}
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-6">
 
-          {/* 标题 */}
-          <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">{t.title}</h1>
-            <p className="text-lg text-gray-600">{t.subtitle}</p>
-          </div>
+        {/* Hero 区域 */}
+        <section className="text-center px-2" aria-labelledby="hero-title">
+          <h1
+            id="hero-title"
+            className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-3 leading-tight"
+          >
+            {t.title}
+          </h1>
+          <p className="text-base sm:text-lg text-gray-500 dark:text-gray-400 max-w-2xl mx-auto leading-relaxed">
+            {t.subtitle}
+          </p>
+        </section>
 
-          {/* 推广表单 */}
-          <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
-            <form onSubmit={handlePromotion} className="space-y-4" noValidate>
-              <div>
-                <label htmlFor="url" className="block text-sm font-medium text-gray-700 mb-2">
-                  {t.urlLabel}
-                </label>
+        {/* 推广表单 */}
+        <section
+          className="bg-white dark:bg-gray-800 rounded-2xl shadow-md border border-gray-100 dark:border-gray-700 p-5 sm:p-8"
+          aria-label="promotion form"
+        >
+          <form onSubmit={handlePromotion} className="space-y-4" noValidate>
+            <div>
+              <label
+                htmlFor="url-input"
+                className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5"
+              >
+                {t.urlLabel}
+              </label>
+              <div className="flex flex-col sm:flex-row gap-3">
                 <input
                   type="url"
-                  id="url"
+                  id="url-input"
+                  name="url"
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
                   placeholder={t.urlPlaceholder}
                   autoComplete="url"
+                  autoCorrect="off"
+                  autoCapitalize="off"
                   spellCheck={false}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  inputMode="url"
+                  // iOS Safari 输入法优化
+                  enterKeyHint="go"
+                  className="
+                    flex-1 px-4 py-3 text-base
+                    border border-gray-300 dark:border-gray-600
+                    bg-white dark:bg-gray-900
+                    text-gray-900 dark:text-white
+                    placeholder-gray-400 dark:placeholder-gray-500
+                    rounded-xl
+                    focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                    transition-shadow duration-150
+                    min-h-[48px]
+                  "
                 />
+                <button
+                  type="submit"
+                  disabled={isPromoting}
+                  aria-busy={isPromoting}
+                  className="
+                    sm:w-auto w-full px-6 py-3 min-h-[48px]
+                    bg-blue-500 hover:bg-blue-600 active:bg-blue-700
+                    disabled:opacity-50 disabled:cursor-not-allowed
+                    text-white font-semibold text-base
+                    rounded-xl shadow-sm
+                    focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2
+                    transition-all duration-150 active:scale-[0.98]
+                    whitespace-nowrap
+                  "
+                >
+                  {isPromoting ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                      </svg>
+                      {t.submittingButton}
+                    </span>
+                  ) : (
+                    t.submitButton
+                  )}
+                </button>
               </div>
+            </div>
 
-              <button
-                type="submit"
-                disabled={isPromoting}
-                aria-busy={isPromoting}
-                className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              >
-                {isPromoting ? t.submittingButton : t.submitButton}
-              </button>
-            </form>
-
+            {/* 状态提示 */}
             {status && (
               <div
                 role="alert"
                 aria-live="assertive"
-                className={`mt-4 p-3 rounded-md text-sm font-medium ${
-                  promotionSuccess
-                    ? 'bg-green-100 text-green-700 border border-green-200'
-                    : 'bg-red-100 text-red-700 border border-red-200'
-                }`}
+                className={`
+                  p-3.5 rounded-xl text-sm font-medium flex items-start gap-2
+                  ${
+                    promotionSuccess
+                      ? 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-800'
+                      : 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800'
+                  }
+                `}
               >
-                {status}
+                <span aria-hidden="true">{promotionSuccess ? '✅' : '⚠️'}</span>
+                <span>{status}</span>
               </div>
             )}
-          </div>
+          </form>
+        </section>
 
-          {/* 推广原理 */}
-          <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">{t.infoTitle}</h2>
-            <ul className="space-y-2 text-gray-600">
-              {t.infoItems.map((item, index) => (
-                <li key={index} className="flex items-start gap-2">
-                  <span className="text-blue-500 font-bold mt-0.5" aria-hidden="true">✓</span>
-                  <span>{item}</span>
-                </li>
+        {/* 推广原理卡片 */}
+        <section
+          className="bg-white dark:bg-gray-800 rounded-2xl shadow-md border border-gray-100 dark:border-gray-700 p-5 sm:p-8"
+          aria-labelledby="info-title"
+        >
+          <h2
+            id="info-title"
+            className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-4"
+          >
+            {t.infoTitle}
+          </h2>
+          {/* 响应式网格：手机1列 → 平板2列 */}
+          <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3" role="list">
+            {t.infoItems.map((item, index) => (
+              <li
+                key={index}
+                className="flex items-start gap-3 p-3 rounded-xl bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800/40"
+              >
+                <span
+                  className="w-6 h-6 rounded-full bg-blue-500 text-white flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5"
+                  aria-hidden="true"
+                >
+                  {index + 1}
+                </span>
+                <span className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">{item}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        {/* 域名统计表格 */}
+        {domainStats.length > 0 && (
+          <section
+            className="bg-white dark:bg-gray-800 rounded-2xl shadow-md border border-gray-100 dark:border-gray-700 p-4 sm:p-8"
+            aria-labelledby="stats-title"
+          >
+            <h2
+              id="stats-title"
+              className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-4"
+            >
+              {t.tableStats.title}
+            </h2>
+            <ScrollTable ariaLabel={t.tableStats.title} headers={statHeaders}>
+              {domainStats.map((stat, index) => (
+                <DomainStatRow key={stat.hostname} stat={stat} index={index} />
               ))}
-            </ul>
-          </div>
+            </ScrollTable>
+          </section>
+        )}
 
-          {/* 域名统计表格 */}
-          {domainStats.length > 0 && (
-            <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
-              <h2 className="text-xl font-bold text-gray-900 mb-4">推广域名详细数据</h2>
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm" aria-label="域名统计数据">
-                  <thead>
-                    <tr className="bg-gray-50">
-                      {['排名', '域名', '流量', '访问量', '转化率', '跳出率', '平均停留时间'].map(
-                        (header) => (
-                          <th
-                            key={header}
-                            scope="col"
-                            className="px-4 py-2 text-left font-medium text-gray-500 whitespace-nowrap"
-                          >
-                            {header}
-                          </th>
-                        )
-                      )}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {domainStats.map((stat, index) => (
-                      <DomainStatRow key={stat.hostname} stat={stat} index={index} />
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
+        {/* 推广效果详情 */}
+        {promotionSuccess && promotionRecords.length > 0 && (
+          <section
+            className="bg-white dark:bg-gray-800 rounded-2xl shadow-md border border-gray-100 dark:border-gray-700 p-4 sm:p-8"
+            aria-labelledby="promo-title"
+          >
+            <h2
+              id="promo-title"
+              className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-4"
+            >
+              {t.tablePromotion.title}
+            </h2>
+            <ScrollTable ariaLabel={t.tablePromotion.title} headers={promoHeaders}>
+              {hasSubdomains ? (
+                <>
+                  {mainRecords.map((record, i) => (
+                    <PromotionRecordRow
+                      key={`main-${i}`}
+                      record={record}
+                      index={i}
+                      stripe="bg-green-50 dark:bg-green-900/20"
+                    />
+                  ))}
+                  <tr>
+                    <td
+                      colSpan={5}
+                      className="px-3 py-2.5 bg-blue-50 dark:bg-blue-900/30 font-semibold text-blue-700 dark:text-blue-400 text-sm"
+                    >
+                      {t.tablePromotion.subdomainLabel}
+                    </td>
+                  </tr>
+                  {subRecords.map((record, i) => (
+                    <PromotionRecordRow
+                      key={`sub-${i}`}
+                      record={record}
+                      index={i}
+                      stripe="bg-blue-50 dark:bg-blue-900/20"
+                    />
+                  ))}
+                </>
+              ) : (
+                promotionRecords.map((record, i) => (
+                  <PromotionRecordRow
+                    key={`record-${i}`}
+                    record={record}
+                    index={i}
+                    stripe="bg-green-50 dark:bg-green-900/20"
+                  />
+                ))
+              )}
+            </ScrollTable>
+          </section>
+        )}
 
-          {/* 推广效果详情 */}
-          {promotionSuccess && promotionRecords.length > 0 && (
-            <div className="bg-white rounded-lg shadow-lg p-6">
-              <h2 className="text-xl font-bold text-gray-900 mb-4">推广效果详情</h2>
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm" aria-label="推广效果详情">
-                  <thead>
-                    <tr className="bg-gray-50">
-                      {['地址', '域名', '平台/引擎', '链接次数', '状态'].map((header) => (
-                        <th
-                          key={header}
-                          scope="col"
-                          className="px-4 py-2 text-left font-medium text-gray-500 whitespace-nowrap"
-                        >
-                          {header}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {hasSubdomains ? (
-                      <>
-                        {mainRecords.map((record, i) => (
-                          <PromotionRecordRow
-                            key={`main-${i}`}
-                            record={record}
-                            index={i}
-                            stripe="bg-green-50"
-                          />
-                        ))}
-                        <tr>
-                          <td
-                            colSpan={5}
-                            className="px-4 py-3 bg-blue-50 font-medium text-blue-700"
-                          >
-                            yndxw.com 子域名推广结果
-                          </td>
-                        </tr>
-                        {subRecords.map((record, i) => (
-                          <PromotionRecordRow
-                            key={`sub-${i}`}
-                            record={record}
-                            index={i}
-                            stripe="bg-blue-50"
-                          />
-                        ))}
-                      </>
-                    ) : (
-                      promotionRecords.map((record, i) => (
-                        <PromotionRecordRow
-                          key={`record-${i}`}
-                          record={record}
-                          index={i}
-                          stripe="bg-green-50"
-                        />
-                      ))
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
+      </main>
 
-        </div>
-      </div>
+      {/* ── 页脚 ───────────────────────────────────────────────── */}
+      <footer className="mt-10 border-t border-gray-200 dark:border-gray-700 py-6 text-center text-xs text-gray-400 dark:text-gray-500">
+        <p>Auto Promotion Tool · 跨平台多语言推广工具</p>
+      </footer>
     </div>
   )
 }

@@ -1,7 +1,7 @@
 /* =====================================================
    全局基础样式
-   注：组件样式由 Tailwind CSS 负责，此文件仅保留
-   全局 reset 和无法用 Tailwind 覆盖的基础设置
+   - Tailwind CSS 负责组件样式
+   - 此文件处理 Tailwind 无法覆盖的全局设置
    ===================================================== */
 
 *,
@@ -12,14 +12,45 @@
   padding: 0;
 }
 
+html {
+  /* 防止 iOS Safari 横屏时字体自动放大 */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  /* 平滑滚动 */
+  scroll-behavior: smooth;
+}
+
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-    'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+  font-family:
+    'Noto Sans SC',
+    'Noto Sans JP',
+    'Noto Sans Arabic',
+    'Noto Sans',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    'Helvetica Neue',
+    Arial,
+    sans-serif;
   line-height: 1.6;
   color: #333;
-  background-color: #f5f5f5;
+  background-color: #f9fafb;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* iOS 安全区域：刘海屏/底部横条适配 */
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+/* 暗色模式背景 */
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #111827;
+    color: #f3f4f6;
+  }
 }
 
 /* RTL 方向支持 */
@@ -27,10 +58,16 @@ body {
   text-align: right;
 }
 
-/* 优化链接默认样式 */
-a {
-  color: inherit;
-  text-decoration: none;
+[dir='rtl'] input,
+[dir='rtl'] textarea {
+  text-align: right;
+}
+
+/* 图片自适应 */
+img,
+svg {
+  display: block;
+  max-width: 100%;
 }
 
 /* 表格重置 */
@@ -39,9 +76,52 @@ table {
   width: 100%;
 }
 
-/* 图片自适应 */
-img,
-svg {
-  display: block;
-  max-width: 100%;
+/* 链接默认样式 */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* 触控优化：移动端按钮点击高亮去除（已由 Tailwind active: 代替） */
+button,
+input,
+select,
+textarea {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* iOS Safari 输入框外观重置 */
+input[type='url'],
+input[type='text'],
+input[type='search'] {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* 滚动条美化（Webkit/Blink） */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* 横向滚动表格：iOS 惯性滚动 */
+.overflow-x-auto {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* 选中文字颜色 */
+::selection {
+  background: #3b82f6;
+  color: white;
 }
