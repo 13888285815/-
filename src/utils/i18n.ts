@@ -40,6 +40,18 @@ export interface Translations {
   };
   loading: string;
   langLabel: string;
+  // 文件上传
+  uploadTitle: string;
+  uploadHint: string;
+  uploadDrag: string;
+  uploadOr: string;
+  uploadBrowse: string;
+  uploadSupport: string;
+  uploadFiles: string;
+  uploadRemove: string;
+  uploadClear: string;
+  uploadCount: string;
+  uploadTotalSize: string;
 }
 
 export const translations: Record<Language, Translations> = {
@@ -83,6 +95,17 @@ export const translations: Record<Language, Translations> = {
     },
     loading: '加载中...',
     langLabel: '语言',
+    uploadTitle: '批量上传文件',
+    uploadHint: '拖拽文件到此处，或点击选择文件',
+    uploadDrag: '拖拽文件到这里',
+    uploadOr: '或者',
+    uploadBrowse: '点击选择文件',
+    uploadSupport: '支持图片、文档、视频、音频等各种格式',
+    uploadFiles: '已上传文件',
+    uploadRemove: '删除',
+    uploadClear: '清空全部',
+    uploadCount: '个文件',
+    uploadTotalSize: '总大小',
   },
   en: {
     title: 'Auto Promotion Tool',
@@ -124,6 +147,17 @@ export const translations: Record<Language, Translations> = {
     },
     loading: 'Loading...',
     langLabel: 'Language',
+    uploadTitle: 'Batch File Upload',
+    uploadHint: 'Drag & drop files here, or click to browse',
+    uploadDrag: 'Drop files here',
+    uploadOr: 'or',
+    uploadBrowse: 'Browse Files',
+    uploadSupport: 'Supports images, documents, videos, audio and more',
+    uploadFiles: 'Uploaded Files',
+    uploadRemove: 'Remove',
+    uploadClear: 'Clear All',
+    uploadCount: 'files',
+    uploadTotalSize: 'Total size',
   },
   fr: {
     title: 'Outil de promotion automatique',
@@ -165,6 +199,17 @@ export const translations: Record<Language, Translations> = {
     },
     loading: 'Chargement...',
     langLabel: 'Langue',
+    uploadTitle: 'Téléchargement de fichiers',
+    uploadHint: 'Glissez-déposez des fichiers ici ou cliquez pour parcourir',
+    uploadDrag: 'Déposez les fichiers ici',
+    uploadOr: 'ou',
+    uploadBrowse: 'Parcourir les fichiers',
+    uploadSupport: 'Supporte images, documents, vidéos, audio et plus',
+    uploadFiles: 'Fichiers téléchargés',
+    uploadRemove: 'Supprimer',
+    uploadClear: 'Tout effacer',
+    uploadCount: 'fichiers',
+    uploadTotalSize: 'Taille totale',
   },
   de: {
     title: 'Automatisches Promotion-Tool',
@@ -206,6 +251,17 @@ export const translations: Record<Language, Translations> = {
     },
     loading: 'Laden...',
     langLabel: 'Sprache',
+    uploadTitle: 'Dateien hochladen',
+    uploadHint: 'Dateien hierher ziehen oder klicken zum Durchsuchen',
+    uploadDrag: 'Dateien hier ablegen',
+    uploadOr: 'oder',
+    uploadBrowse: 'Dateien durchsuchen',
+    uploadSupport: 'Unterstützt Bilder, Dokumente, Videos, Audio und mehr',
+    uploadFiles: 'Hochgeladene Dateien',
+    uploadRemove: 'Entfernen',
+    uploadClear: 'Alle löschen',
+    uploadCount: 'Dateien',
+    uploadTotalSize: 'Gesamtgröße',
   },
   ja: {
     title: '自動プロモーションツール',
@@ -247,6 +303,17 @@ export const translations: Record<Language, Translations> = {
     },
     loading: '読み込み中...',
     langLabel: '言語',
+    uploadTitle: 'ファイル一括アップロード',
+    uploadHint: 'ファイルをここにドラッグするか、クリックして選択',
+    uploadDrag: 'ここにファイルをドロップ',
+    uploadOr: 'または',
+    uploadBrowse: 'ファイルを選択',
+    uploadSupport: '画像・文書・動画・音声など各種形式に対応',
+    uploadFiles: 'アップロード済みファイル',
+    uploadRemove: '削除',
+    uploadClear: 'すべて削除',
+    uploadCount: 'ファイル',
+    uploadTotalSize: '合計サイズ',
   },
   ar: {
     title: 'أداة الترويج التلقائي',
@@ -288,6 +355,17 @@ export const translations: Record<Language, Translations> = {
     },
     loading: 'جارٍ التحميل...',
     langLabel: 'اللغة',
+    uploadTitle: 'رفع الملفات بالجملة',
+    uploadHint: 'اسحب الملفات هنا أو انقر للاستعراض',
+    uploadDrag: 'أفلت الملفات هنا',
+    uploadOr: 'أو',
+    uploadBrowse: 'استعراض الملفات',
+    uploadSupport: 'يدعم الصور والمستندات ومقاطع الفيديو والصوت والمزيد',
+    uploadFiles: 'الملفات المرفوعة',
+    uploadRemove: 'حذف',
+    uploadClear: 'حذف الكل',
+    uploadCount: 'ملفات',
+    uploadTotalSize: 'الحجم الإجمالي',
   },
 };
 
