@@ -65,6 +65,15 @@ export interface Translations {
   chatNewSession: string;
   chatPowered: string;
   chatFaqs: string[];
+  // 实时监控面板
+  monitorTitle: string;
+  monitorOnlineNow: string;
+  monitorTodayVisits: string;
+  monitorTotalPromotions: string;
+  monitorStatus: string;
+  monitorStatusRunning: string;
+  monitorLastUpdate: string;
+  monitorPlatformsCovered: string;
 }
 
 export const translations: Record<Language, Translations> = {
@@ -136,6 +145,14 @@ export const translations: Record<Language, Translations> = {
       '推广效果如何？',
       '如何上传文件？',
     ],
+    monitorTitle: '实时监控',
+    monitorOnlineNow: '当前在线',
+    monitorTodayVisits: '今日访问',
+    monitorTotalPromotions: '累计推广',
+    monitorStatus: '系统状态',
+    monitorStatusRunning: '运行正常',
+    monitorLastUpdate: '最后更新',
+    monitorPlatformsCovered: '覆盖平台',
   },
   en: {
     title: 'Auto Promotion Tool',
@@ -205,6 +222,14 @@ export const translations: Record<Language, Translations> = {
       'How effective is it?',
       'How to upload files?',
     ],
+    monitorTitle: 'Live Monitor',
+    monitorOnlineNow: 'Online Now',
+    monitorTodayVisits: 'Today Visits',
+    monitorTotalPromotions: 'Total Promotions',
+    monitorStatus: 'System Status',
+    monitorStatusRunning: 'All Systems Go',
+    monitorLastUpdate: 'Last Updated',
+    monitorPlatformsCovered: 'Platforms',
   },
   fr: {
     title: 'Outil de promotion automatique',
@@ -274,6 +299,14 @@ export const translations: Record<Language, Translations> = {
       'Quelle est l\'efficacité ?',
       'Comment télécharger des fichiers ?',
     ],
+    monitorTitle: 'Surveillance en direct',
+    monitorOnlineNow: 'En ligne maintenant',
+    monitorTodayVisits: 'Visites aujourd\'hui',
+    monitorTotalPromotions: 'Total promotions',
+    monitorStatus: 'État du système',
+    monitorStatusRunning: 'Système opérationnel',
+    monitorLastUpdate: 'Dernière mise à jour',
+    monitorPlatformsCovered: 'Plateformes',
   },
   de: {
     title: 'Automatisches Promotion-Tool',
@@ -343,6 +376,14 @@ export const translations: Record<Language, Translations> = {
       'Wie effektiv ist es?',
       'Wie lade ich Dateien hoch?',
     ],
+    monitorTitle: 'Echtzeit-Monitor',
+    monitorOnlineNow: 'Jetzt online',
+    monitorTodayVisits: 'Besuche heute',
+    monitorTotalPromotions: 'Promotionen gesamt',
+    monitorStatus: 'Systemstatus',
+    monitorStatusRunning: 'System läuft',
+    monitorLastUpdate: 'Letzte Aktualisierung',
+    monitorPlatformsCovered: 'Plattformen',
   },
   ja: {
     title: '自動プロモーションツール',
@@ -412,6 +453,14 @@ export const translations: Record<Language, Translations> = {
       '効果はどうですか？',
       'ファイルのアップロード方法は？',
     ],
+    monitorTitle: 'リアルタイム監視',
+    monitorOnlineNow: '現在オンライン',
+    monitorTodayVisits: '本日の訪問数',
+    monitorTotalPromotions: '累計プロモーション',
+    monitorStatus: 'システム状態',
+    monitorStatusRunning: '正常稼働中',
+    monitorLastUpdate: '最終更新',
+    monitorPlatformsCovered: '対応プラットフォーム',
   },
   ar: {
     title: 'أداة الترويج التلقائي',
@@ -481,6 +530,14 @@ export const translations: Record<Language, Translations> = {
       'ما مدى فعاليته؟',
       'كيف أرفع الملفات؟',
     ],
+    monitorTitle: 'المراقبة الحية',
+    monitorOnlineNow: 'متصل الآن',
+    monitorTodayVisits: 'زيارات اليوم',
+    monitorTotalPromotions: 'إجمالي الترويج',
+    monitorStatus: 'حالة النظام',
+    monitorStatusRunning: 'يعمل بشكل طبيعي',
+    monitorLastUpdate: 'آخر تحديث',
+    monitorPlatformsCovered: 'المنصات',
   },
 };
 

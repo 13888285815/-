@@ -296,6 +296,134 @@ function FileUploadZone({
   )
 }
 
+// ─── 实时监控面板 ──────────────────────────────────────────────
+interface MonitorStats {
+  onlineNow: number
+  todayVisits: number
+  totalPromotions: number
+  platformsCovered: number
+  lastUpdate: string
+}
+
+function LiveMonitorPanel({ stats, t, isRTL }: { stats: MonitorStats; t: Translations; isRTL: boolean }) {
+  const cards = [
+    {
+      label: t.monitorOnlineNow,
+      value: stats.onlineNow.toLocaleString(),
+      icon: (
+        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+        </svg>
+      ),
+      gradient: 'from-blue-500 to-cyan-500',
+      bg: 'from-blue-50 to-cyan-50',
+      textColor: 'text-blue-600',
+      pulse: true,
+    },
+    {
+      label: t.monitorTodayVisits,
+      value: stats.todayVisits.toLocaleString(),
+      icon: (
+        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"/><circle cx="12" cy="12" r="3"/>
+        </svg>
+      ),
+      gradient: 'from-violet-500 to-purple-500',
+      bg: 'from-violet-50 to-purple-50',
+      textColor: 'text-violet-600',
+      pulse: false,
+    },
+    {
+      label: t.monitorTotalPromotions,
+      value: stats.totalPromotions.toLocaleString(),
+      icon: (
+        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"/>
+        </svg>
+      ),
+      gradient: 'from-emerald-500 to-teal-500',
+      bg: 'from-emerald-50 to-teal-50',
+      textColor: 'text-emerald-600',
+      pulse: false,
+    },
+    {
+      label: t.monitorPlatformsCovered,
+      value: stats.platformsCovered.toString(),
+      icon: (
+        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418"/>
+        </svg>
+      ),
+      gradient: 'from-amber-500 to-orange-500',
+      bg: 'from-amber-50 to-orange-50',
+      textColor: 'text-amber-600',
+      pulse: false,
+    },
+  ]
+
+  return (
+    <section className="space-y-4">
+      {/* 面板标题行 */}
+      <div className={`flex items-center justify-between flex-wrap gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+        <div className={`flex items-center gap-2.5 ${isRTL ? 'flex-row-reverse' : ''}`}>
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center shadow-sm shadow-rose-200">
+            <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"/>
+            </svg>
+          </div>
+          <h2 className="font-bold text-gray-900 text-base sm:text-lg">{t.monitorTitle}</h2>
+        </div>
+
+        {/* 状态 + 最后更新 */}
+        <div className={`flex items-center gap-3 flex-wrap ${isRTL ? 'flex-row-reverse' : ''}`}>
+          <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 ${isRTL ? 'flex-row-reverse' : ''}`}>
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse flex-shrink-0"/>
+            <span className="text-xs font-semibold text-emerald-700">{t.monitorStatus}：{t.monitorStatusRunning}</span>
+          </div>
+          <span className="text-xs text-gray-400">
+            {t.monitorLastUpdate}：{stats.lastUpdate}
+          </span>
+        </div>
+      </div>
+
+      {/* 四个数据卡片 */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        {cards.map((card) => (
+          <div key={card.label}
+            className={`relative overflow-hidden rounded-2xl bg-gradient-to-br ${card.bg}
+              border border-white shadow-lg shadow-gray-100/80 p-4 sm:p-5`}
+          >
+            {/* 装饰背景圆 */}
+            <div className={`absolute -right-3 -top-3 w-16 h-16 rounded-full bg-gradient-to-br ${card.gradient} opacity-10`}/>
+            <div className={`absolute -right-1 -bottom-4 w-12 h-12 rounded-full bg-gradient-to-br ${card.gradient} opacity-10`}/>
+
+            {/* 图标 */}
+            <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${card.gradient} text-white flex items-center justify-center shadow-md mb-3`}>
+              {card.icon}
+            </div>
+
+            {/* 数值 —— 大字体醒目 */}
+            <div className={`flex items-end gap-1.5 mb-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
+              <span className={`text-3xl sm:text-4xl font-black tracking-tight leading-none ${card.textColor}`}>
+                {card.value}
+              </span>
+              {card.pulse && (
+                <span className="mb-0.5 flex items-center gap-1 text-xs font-semibold text-emerald-500">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping inline-block"/>
+                  LIVE
+                </span>
+              )}
+            </div>
+
+            {/* 标签 */}
+            <p className="text-xs sm:text-sm font-semibold text-gray-500 leading-tight">{card.label}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+  )
+}
+
 // ─── 智能客服：消息类型 ────────────────────────────────────────
 interface ChatMessage {
   id: string
@@ -638,11 +766,38 @@ const Promotion: React.FC = () => {
   const [promotionRecords, setPromotionRecords] = useState<PromotionRecord[]>([])
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([])
 
+  // ── 实时监控数据 ──────────────────────────────────────────────
+  const [monitorStats, setMonitorStats] = useState<MonitorStats>(() => {
+    const now = new Date()
+    return {
+      onlineNow: Math.floor(Math.random() * 800) + 1200,
+      todayVisits: Math.floor(Math.random() * 5000) + 18000,
+      totalPromotions: Math.floor(Math.random() * 50000) + 980000,
+      platformsCovered: 6,
+      lastUpdate: `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}`,
+    }
+  })
+
   const t: Translations = translations[currentLang]
   const isRTL = RTL_LANGUAGES.has(currentLang)
 
   useEffect(() => {
     detectLanguage().then(lang => { setCurrentLang(lang); setIsLoading(false) })
+  }, [])
+
+  // 实时监控：每 3 秒随机微调数据，模拟真实波动
+  useEffect(() => {
+    const timer = setInterval(() => {
+      const now = new Date()
+      setMonitorStats(prev => ({
+        onlineNow: Math.max(500, prev.onlineNow + Math.floor(Math.random() * 11) - 5),
+        todayVisits: prev.todayVisits + Math.floor(Math.random() * 4),
+        totalPromotions: prev.totalPromotions + Math.floor(Math.random() * 3),
+        platformsCovered: prev.platformsCovered,
+        lastUpdate: `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}`,
+      }))
+    }, 3000)
+    return () => clearInterval(timer)
   }, [])
 
   useEffect(() => {
@@ -791,6 +946,9 @@ const Promotion: React.FC = () => {
           </h1>
           <p className="text-sm sm:text-base text-gray-500 max-w-xl mx-auto leading-relaxed">{t.subtitle}</p>
         </section>
+
+        {/* 实时监控面板 */}
+        <LiveMonitorPanel stats={monitorStats} t={t} isRTL={isRTL} />
 
         {/* 表单 + 上传 并排（大屏左右，小屏上下） */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
