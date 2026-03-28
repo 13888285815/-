@@ -850,10 +850,31 @@ const Promotion: React.FC = () => {
     if (!hostname || hostname.length > 253) { setStatus(t.errorMessage); setPromotionSuccess(false); return }
 
     setIsPromoting(true)
-    setStatus(t.submittingButton)
     setPromotionSuccess(false)
     setDomainStats([])
     setPromotionRecords([])
+
+    // 定时推送状态：逐平台模拟进度
+    const PUSH_STEPS = [
+      { icon: '🔍', msg: `正在分析域名 ${hostname}…` },
+      { icon: '📡', msg: '正在推送到 百度…' },
+      { icon: '💬', msg: '正在推送到 微信…' },
+      { icon: '📱', msg: '正在推送到 微博…' },
+      { icon: '🎵', msg: '正在推送到 抖音…' },
+      { icon: '🌐', msg: '正在推送到 Google…' },
+      { icon: '📘', msg: '正在推送到 Facebook…' },
+      { icon: '⚡', msg: '正在汇总推广数据…' },
+    ]
+
+    let stepIdx = 0
+    setStatus(`${PUSH_STEPS[0].icon} ${PUSH_STEPS[0].msg}`)
+
+    const stepTimer = setInterval(() => {
+      stepIdx++
+      if (stepIdx < PUSH_STEPS.length) {
+        setStatus(`${PUSH_STEPS[stepIdx].icon} ${PUSH_STEPS[stepIdx].msg}`)
+      }
+    }, 350)
 
     try {
       const protocol = parsedUrl.protocol
@@ -861,7 +882,11 @@ const Promotion: React.FC = () => {
       if (hostname.endsWith('yndxw.com')) {
         newSubdomains = ['www','m','api','cdn','blog','news'].map(p => `${protocol}//${p}.yndxw.com`)
       }
-      await new Promise<void>(r => setTimeout(r, 2000))
+      // 等待所有步骤走完（步骤数 × 350ms，最少 2s）
+      const minWait = Math.max(2000, PUSH_STEPS.length * 350 + 300)
+      await new Promise<void>(r => setTimeout(r, minWait))
+      clearInterval(stepTimer)
+
       const seed = Date.now()
       const allHostnames = [hostname, ...newSubdomains.map(s => new URL(s).hostname)]
       setDomainStats(allHostnames.map((h, i) => generateDomainStat(h, i+1, seed+i)))
@@ -869,6 +894,7 @@ const Promotion: React.FC = () => {
       setStatus(t.successMessage)
       setPromotionSuccess(true)
     } catch {
+      clearInterval(stepTimer)
       setStatus(t.errorMessage)
       setPromotionSuccess(false)
     } finally {
@@ -1015,14 +1041,23 @@ const Promotion: React.FC = () => {
               </button>
 
               {status && (
-                <div role="alert" aria-live="assertive"
-                  className={`flex items-start gap-2.5 p-3.5 rounded-xl text-sm font-medium
-                    ${promotionSuccess
-                      ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                      : 'bg-red-50 text-red-600 border border-red-200'
+                <div role="alert" aria-live="polite"
+                  className={`flex items-start gap-2.5 p-3.5 rounded-xl text-sm font-medium transition-all
+                    ${isPromoting
+                      ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                      : promotionSuccess
+                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                        : 'bg-red-50 text-red-600 border border-red-200'
                     } ${isRTL ? 'flex-row-reverse text-right' : ''}`}
                 >
-                  <span className="text-base leading-none flex-shrink-0">{promotionSuccess ? '✅' : '⚠️'}</span>
+                  {isPromoting ? (
+                    <svg className="w-4 h-4 mt-0.5 flex-shrink-0 animate-spin text-blue-500" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
+                    </svg>
+                  ) : (
+                    <span className="text-base leading-none flex-shrink-0">{promotionSuccess ? '✅' : '⚠️'}</span>
+                  )}
                   <span>{status}</span>
                 </div>
               )}
