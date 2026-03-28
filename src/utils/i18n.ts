@@ -74,6 +74,22 @@ export interface Translations {
   monitorStatusRunning: string;
   monitorLastUpdate: string;
   monitorPlatformsCovered: string;
+  // AI 多模态推广类型
+  multimodalTitle: string;
+  multimodalTypes: { id: string; label: string; icon: string; desc: string }[];
+  // 全球推广渠道
+  channelsTitle: string;
+  // 定时自动推送
+  scheduleTitle: string;
+  scheduleDefaultUrl: string;
+  scheduleNextPush: string;
+  scheduleLastPush: string;
+  scheduleStatus: string;
+  scheduleStatusActive: string;
+  scheduleHistoryTitle: string;
+  scheduleHistoryEmpty: string;
+  scheduleInterval: string;
+  scheduleChannelCount: string;
 }
 
 export const translations: Record<Language, Translations> = {
@@ -153,6 +169,26 @@ export const translations: Record<Language, Translations> = {
     monitorStatusRunning: '运行正常',
     monitorLastUpdate: '最后更新',
     monitorPlatformsCovered: '覆盖平台',
+    multimodalTitle: 'AI 多模态推广类型',
+    multimodalTypes: [
+      { id: 'text',    icon: '📝', label: '文本',  desc: '文章、博客、评论、论坛帖子' },
+      { id: 'voice',   icon: '🎙️', label: '语音',  desc: '播客、语音消息、音频广告' },
+      { id: 'video',   icon: '🎬', label: '视频',  desc: '短视频、直播、Reels、YouTube' },
+      { id: 'file',    icon: '📁', label: '文件',  desc: 'PDF、文档、表格、演示文稿' },
+      { id: 'program', icon: '💻', label: '程序',  desc: '小程序、App、插件、脚本' },
+      { id: 'email',   icon: '📧', label: '邮件',  desc: 'EDM 营销邮件、订阅列表' },
+    ],
+    channelsTitle: '全球推广渠道',
+    scheduleTitle: '整点定时自动推送',
+    scheduleDefaultUrl: '默认推广地址',
+    scheduleNextPush: '下次推送',
+    scheduleLastPush: '上次推送',
+    scheduleStatus: '任务状态',
+    scheduleStatusActive: '自动运行中',
+    scheduleHistoryTitle: '推送历史',
+    scheduleHistoryEmpty: '暂无记录',
+    scheduleInterval: '每小时整点',
+    scheduleChannelCount: '个渠道',
   },
   en: {
     title: 'Auto Promotion Tool',
@@ -230,6 +266,26 @@ export const translations: Record<Language, Translations> = {
     monitorStatusRunning: 'All Systems Go',
     monitorLastUpdate: 'Last Updated',
     monitorPlatformsCovered: 'Platforms',
+    multimodalTitle: 'AI Multimodal Promotion Types',
+    multimodalTypes: [
+      { id: 'text',    icon: '📝', label: 'Text',    desc: 'Articles, blogs, comments, forum posts' },
+      { id: 'voice',   icon: '🎙️', label: 'Voice',   desc: 'Podcasts, voice messages, audio ads' },
+      { id: 'video',   icon: '🎬', label: 'Video',   desc: 'Short videos, live streams, Reels, YouTube' },
+      { id: 'file',    icon: '📁', label: 'File',    desc: 'PDF, documents, spreadsheets, slides' },
+      { id: 'program', icon: '💻', label: 'Program', desc: 'Mini-apps, apps, plugins, scripts' },
+      { id: 'email',   icon: '📧', label: 'Email',   desc: 'EDM campaigns, subscription lists' },
+    ],
+    channelsTitle: 'Global Promotion Channels',
+    scheduleTitle: 'Auto Hourly Push',
+    scheduleDefaultUrl: 'Default Promotion URL',
+    scheduleNextPush: 'Next Push',
+    scheduleLastPush: 'Last Push',
+    scheduleStatus: 'Task Status',
+    scheduleStatusActive: 'Auto Running',
+    scheduleHistoryTitle: 'Push History',
+    scheduleHistoryEmpty: 'No records yet',
+    scheduleInterval: 'Every hour (on the hour)',
+    scheduleChannelCount: 'channels',
   },
   fr: {
     title: 'Outil de promotion automatique',
@@ -307,6 +363,26 @@ export const translations: Record<Language, Translations> = {
     monitorStatusRunning: 'Système opérationnel',
     monitorLastUpdate: 'Dernière mise à jour',
     monitorPlatformsCovered: 'Plateformes',
+    multimodalTitle: 'Types de promotion multimodale IA',
+    multimodalTypes: [
+      { id: 'text',    icon: '📝', label: 'Texte',      desc: 'Articles, blogs, commentaires, forums' },
+      { id: 'voice',   icon: '🎙️', label: 'Voix',       desc: 'Podcasts, messages vocaux, publicités audio' },
+      { id: 'video',   icon: '🎬', label: 'Vidéo',      desc: 'Courtes vidéos, lives, Reels, YouTube' },
+      { id: 'file',    icon: '📁', label: 'Fichier',    desc: 'PDF, documents, tableurs, présentations' },
+      { id: 'program', icon: '💻', label: 'Programme',  desc: 'Mini-apps, plugins, scripts' },
+      { id: 'email',   icon: '📧', label: 'Email',      desc: 'Campagnes EDM, listes d\'abonnés' },
+    ],
+    channelsTitle: 'Canaux de promotion mondiaux',
+    scheduleTitle: 'Envoi automatique toutes les heures',
+    scheduleDefaultUrl: 'URL de promotion par défaut',
+    scheduleNextPush: 'Prochain envoi',
+    scheduleLastPush: 'Dernier envoi',
+    scheduleStatus: 'État de la tâche',
+    scheduleStatusActive: 'En cours d\'exécution',
+    scheduleHistoryTitle: 'Historique des envois',
+    scheduleHistoryEmpty: 'Aucun enregistrement',
+    scheduleInterval: 'Toutes les heures (à l\'heure pile)',
+    scheduleChannelCount: 'canaux',
   },
   de: {
     title: 'Automatisches Promotion-Tool',
@@ -384,6 +460,26 @@ export const translations: Record<Language, Translations> = {
     monitorStatusRunning: 'System läuft',
     monitorLastUpdate: 'Letzte Aktualisierung',
     monitorPlatformsCovered: 'Plattformen',
+    multimodalTitle: 'KI Multimodal-Promotion-Typen',
+    multimodalTypes: [
+      { id: 'text',    icon: '📝', label: 'Text',      desc: 'Artikel, Blogs, Kommentare, Foren' },
+      { id: 'voice',   icon: '🎙️', label: 'Sprache',   desc: 'Podcasts, Sprachnachrichten, Audio-Werbung' },
+      { id: 'video',   icon: '🎬', label: 'Video',     desc: 'Kurzvideos, Livestreams, Reels, YouTube' },
+      { id: 'file',    icon: '📁', label: 'Datei',     desc: 'PDF, Dokumente, Tabellen, Präsentationen' },
+      { id: 'program', icon: '💻', label: 'Programm',  desc: 'Mini-Apps, Plugins, Skripte' },
+      { id: 'email',   icon: '📧', label: 'E-Mail',    desc: 'EDM-Kampagnen, Abonnementlisten' },
+    ],
+    channelsTitle: 'Globale Promotion-Kanäle',
+    scheduleTitle: 'Automatischer stündlicher Push',
+    scheduleDefaultUrl: 'Standard-Promotion-URL',
+    scheduleNextPush: 'Nächster Push',
+    scheduleLastPush: 'Letzter Push',
+    scheduleStatus: 'Aufgabenstatus',
+    scheduleStatusActive: 'Automatisch aktiv',
+    scheduleHistoryTitle: 'Push-Verlauf',
+    scheduleHistoryEmpty: 'Keine Einträge',
+    scheduleInterval: 'Jede Stunde (zur vollen Stunde)',
+    scheduleChannelCount: 'Kanäle',
   },
   ja: {
     title: '自動プロモーションツール',
@@ -461,6 +557,26 @@ export const translations: Record<Language, Translations> = {
     monitorStatusRunning: '正常稼働中',
     monitorLastUpdate: '最終更新',
     monitorPlatformsCovered: '対応プラットフォーム',
+    multimodalTitle: 'AIマルチモーダルプロモーション',
+    multimodalTypes: [
+      { id: 'text',    icon: '📝', label: 'テキスト', desc: '記事・ブログ・コメント・フォーラム' },
+      { id: 'voice',   icon: '🎙️', label: '音声',     desc: 'ポッドキャスト・音声メッセージ・音声広告' },
+      { id: 'video',   icon: '🎬', label: '動画',     desc: 'ショート動画・ライブ・Reels・YouTube' },
+      { id: 'file',    icon: '📁', label: 'ファイル', desc: 'PDF・文書・スプレッドシート・スライド' },
+      { id: 'program', icon: '💻', label: 'プログラム', desc: 'ミニアプリ・プラグイン・スクリプト' },
+      { id: 'email',   icon: '📧', label: 'メール',   desc: 'EDMキャンペーン・購読リスト' },
+    ],
+    channelsTitle: 'グローバルプロモーションチャネル',
+    scheduleTitle: '毎時自動プッシュ',
+    scheduleDefaultUrl: 'デフォルトプロモーションURL',
+    scheduleNextPush: '次回プッシュ',
+    scheduleLastPush: '前回プッシュ',
+    scheduleStatus: 'タスク状態',
+    scheduleStatusActive: '自動実行中',
+    scheduleHistoryTitle: 'プッシュ履歴',
+    scheduleHistoryEmpty: '記録なし',
+    scheduleInterval: '毎時0分',
+    scheduleChannelCount: 'チャネル',
   },
   ar: {
     title: 'أداة الترويج التلقائي',
@@ -538,6 +654,26 @@ export const translations: Record<Language, Translations> = {
     monitorStatusRunning: 'يعمل بشكل طبيعي',
     monitorLastUpdate: 'آخر تحديث',
     monitorPlatformsCovered: 'المنصات',
+    multimodalTitle: 'أنواع الترويج متعدد الوسائط بالذكاء الاصطناعي',
+    multimodalTypes: [
+      { id: 'text',    icon: '📝', label: 'نص',      desc: 'مقالات، مدونات، تعليقات، منتديات' },
+      { id: 'voice',   icon: '🎙️', label: 'صوت',     desc: 'بودكاست، رسائل صوتية، إعلانات صوتية' },
+      { id: 'video',   icon: '🎬', label: 'فيديو',   desc: 'مقاطع قصيرة، بث مباشر، Reels، YouTube' },
+      { id: 'file',    icon: '📁', label: 'ملف',     desc: 'PDF، وثائق، جداول بيانات، عروض' },
+      { id: 'program', icon: '💻', label: 'برنامج',  desc: 'تطبيقات صغيرة، إضافات، سكريبتات' },
+      { id: 'email',   icon: '📧', label: 'بريد',    desc: 'حملات EDM، قوائم الاشتراك' },
+    ],
+    channelsTitle: 'قنوات الترويج العالمية',
+    scheduleTitle: 'الإرسال التلقائي كل ساعة',
+    scheduleDefaultUrl: 'عنوان URL الافتراضي للترويج',
+    scheduleNextPush: 'الإرسال القادم',
+    scheduleLastPush: 'آخر إرسال',
+    scheduleStatus: 'حالة المهمة',
+    scheduleStatusActive: 'يعمل تلقائياً',
+    scheduleHistoryTitle: 'سجل الإرسال',
+    scheduleHistoryEmpty: 'لا توجد سجلات',
+    scheduleInterval: 'كل ساعة (عند الساعة الكاملة)',
+    scheduleChannelCount: 'قناة',
   },
 };
 
